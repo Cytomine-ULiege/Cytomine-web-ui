@@ -51,6 +51,20 @@
         />
       </vl-layer-tile>
 
+      <vl-layer-tile :extent="extent" ref="heatmapLayer">
+        <vl-source-zoomify
+          :projection="projectionName"
+          :urls="heatmapLayerURLs"
+          :size="imageSize"
+          :extent="extent"
+          :crossOrigin="slices[0].imageServerUrl"
+          ref="baseSource"
+          @mounted="setBaseSource()"
+          :transition="0"
+          :tile-size="tileSize"
+        />
+      </vl-layer-tile>
+
       <vl-layer-image>
         <vl-source-raster
           v-if="baseSource && colorManipulationOn"
@@ -436,7 +450,11 @@ export default {
       let slice = this.slices[0];
       return  [`${slice.imageServerUrl}/image/${slice.path}/normalized-tile/zoom/{z}/ti/{tileIndex}.jpg${this.baseLayerURLQuery}`];
     },
-
+    heatmapLayerURLs(){
+      let slice = this.slices[0];
+      // To change the slice.path to the hardcoded heatmap & add threshold + colormaps in the query
+      return [`${slice.imageServerUrl}/image/${slice.path}/normalized-tile/zoom/{z}/ti/{tileIndex}.jpg${this.baseLayerURLQuery}`];
+    },
     colorManipulationOn() {
       return this.imageWrapper.colors.brightness !== 0
                 || this.imageWrapper.colors.hue !== 0 || this.imageWrapper.colors.saturation !== 0;

@@ -19,6 +19,7 @@ import {createColorStyle, createColorLineStyle, changeOpacity, createStrokeStyle
 let initialTermsOpacity = 1;
 let initialTracksOpacity = 1;
 let initialLayersOpacity = 0.5;
+let initialThreshold = 0.0;
 
 export default {
   state() {
@@ -33,6 +34,7 @@ export default {
       multipleTermsStyle: createColorStyle('#fff', initialLayersOpacity),
 
       layersOpacity: initialLayersOpacity,
+      threshold: initialThreshold,
 
       wrappedTracks: null,
       multipleTracksStyle: createStrokeStyle('#fff', initialLayersOpacity)
@@ -101,6 +103,10 @@ export default {
         });
       }
       changeOpacity(state.multipleTracksStyle, opacity);
+    },
+
+    setThreshold(state, threshold) {
+      state.threshold = threshold;
     },
   },
 

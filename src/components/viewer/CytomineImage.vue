@@ -53,13 +53,12 @@
 
       <vl-layer-tile :extent="extent" ref="heatmapLayer">
         <vl-source-zoomify
-          :projection="projectionName"
+          :projection="projectionNameHM"
           :urls="heatmapLayerURLs"
           :size="imageSize"
           :extent="extent"
           :crossOrigin="slices[0].imageServerUrl"
           ref="baseSource"
-          @mounted="setBaseSource()"
           :transition="0"
           :tile-size="tileSize"
         />
@@ -321,6 +320,9 @@ export default {
     projectionName() {
       return `CYTO-${this.image.id}`;
     },
+    projectionNameHM() {
+      return `CYTO-${constants.HEATMAP_ID}`;
+    },
     terms() {
       return this.$store.getters['currentProject/terms'];
     },
@@ -448,12 +450,27 @@ export default {
     },
     baseLayerURLs() {
       let slice = this.slices[0];
-      return  [`${slice.imageServerUrl}/image/${slice.path}/normalized-tile/zoom/{z}/ti/{tileIndex}.jpg${this.baseLayerURLQuery}`];
+      return [`${slice.imageServerUrl}/image/${slice.path}/normalized-tile/zoom/{z}/ti/{tileIndex}.jpg${this.baseLayerURLQuery}`];
+    },
+    heatmapLayerParams() {
+      let params = {
+        threshold: this.imageWrapper.style.threshold,
+        colormaps: 'JET'
+      };
+      return params;
+    },
+    heatmapURLQuery() {
+      let query = new URLSearchParams({...this.baseLayerSliceParams, ...this.baseLayerProcessingParams, ...this.heatmapLayerParams}).toString();
+      if (query.length > 0) {
+        return `?${query}`;
+      }
+      return query;
     },
     heatmapLayerURLs(){
       let slice = this.slices[0];
       // To change the slice.path to the hardcoded heatmap & add threshold + colormaps in the query
-      return [`${slice.imageServerUrl}/image/${slice.path}/normalized-tile/zoom/{z}/ti/{tileIndex}.jpg${this.baseLayerURLQuery}`];
+      //return [`${slice.imageServerUrl}/image/${constants.HEATMAP_PATH}/normalized-tile/zoom/{z}/ti/{tileIndex}.png${this.baseLayerURLQuery}`];
+      return [`${slice.imageServerUrl}/image/${slice.path}/normalized-tile/zoom/{z}/ti/{tileIndex}.png${this.heatmapURLQuery}`];
     },
     colorManipulationOn() {
       return this.imageWrapper.colors.brightness !== 0

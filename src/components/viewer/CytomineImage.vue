@@ -460,7 +460,14 @@ export default {
       return params;
     },
     heatmapURLQuery() {
-      let query = new URLSearchParams({...this.baseLayerSliceParams, ...this.baseLayerProcessingParams, ...this.heatmapLayerParams}).toString();
+      // Hardcoded values
+      let processingParams = {
+        // eslint-disable-next-line camelcase
+        min_intensities: 0,
+        // eslint-disable-next-line camelcase
+        max_intensities: 255
+      };
+      let query = new URLSearchParams({...this.baseLayerSliceParams, ...processingParams, ...this.heatmapLayerParams}).toString();
       if (query.length > 0) {
         return `?${query}`;
       }
@@ -468,9 +475,7 @@ export default {
     },
     heatmapLayerURLs(){
       let slice = this.slices[0];
-      // To change the slice.path to the hardcoded heatmap & add threshold + colormaps in the query
-      //return [`${slice.imageServerUrl}/image/${constants.HEATMAP_PATH}/normalized-tile/zoom/{z}/ti/{tileIndex}.png${this.baseLayerURLQuery}`];
-      return [`${slice.imageServerUrl}/image/${slice.path}/normalized-tile/zoom/{z}/ti/{tileIndex}.png${this.heatmapURLQuery}`];
+      return [`${slice.imageServerUrl}/image/${constants.HEATMAP_PATH}/normalized-tile/zoom/{z}/ti/{tileIndex}.png${this.heatmapURLQuery}`];
     },
     colorManipulationOn() {
       return this.imageWrapper.colors.brightness !== 0

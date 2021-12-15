@@ -19,7 +19,7 @@ import {createColorStyle, createColorLineStyle, changeOpacity, createStrokeStyle
 let initialTermsOpacity = 1;
 let initialTracksOpacity = 1;
 let initialLayersOpacity = 0.5;
-let initialThreshold = 0.0;
+let initialThreshold = 0.5;
 
 export default {
   state() {

@@ -51,7 +51,7 @@
         />
       </vl-layer-tile>
 
-      <vl-layer-tile :extent="extent" ref="heatmapLayer">
+      <vl-layer-tile v-if="this.image.id === 1186" :extent="extent" ref="heatmapLayer">
         <vl-source-zoomify
           :projection="projectionNameHM"
           :urls="heatmapLayerURLs"

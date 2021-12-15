@@ -65,11 +65,11 @@
       <input class="slider is-fullwidth is-small" v-model="layersOpacity" step="0.05" min="0" max="1" type="range">
     </div>
 
-    <table class="threshold">
+    <table v-if="this.image.id === 1186" class="threshold">
       <tr>
         <td>{{ $t('threshold') }}</td>
         <td>
-          <cytomine-slider v-model="threshold" :min="0.0" :max="1" :interval="0.1" :integer-only="false"/>
+          <cytomine-slider v-model="threshold" :min="0.0" :max="1" :interval="0.01" :integer-only="false"/>
         </td>
       </tr>
     </table>

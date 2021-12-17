@@ -96,6 +96,7 @@ export default {
             {key: 'project-explore-property', label: 'properties', icon: 'fas fa-tag'},
             {key: 'project-explore-follow', label: 'broadcast', icon: 'fas fa-street-view'},
             {key: 'project-explore-review', label: 'review', icon: 'fas fa-check-circle'},
+            {key: 'project-explore-heatmap', label: 'heatmap', icon: 'fas fa-fire-alt'},
           ]
         },
         {

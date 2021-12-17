@@ -165,6 +165,13 @@
             </a>
             <review-panel class="panel-options" v-show="activePanel === 'review'" :index="index" />
           </li>
+
+          <li v-if="isPanelDisplayed('heatmap') && this.image.id == imageDemoID">
+            <a @click="togglePanel('heatmap')" :class="{active: activePanel === 'heatmap'}">
+              <i class="fas fa-fire-alt"></i>
+            </a>
+            <heatmap-panel class="panel-options" v-show="activePanel === 'heatmap'" :index="index"/>
+          </li>
         </template>
       </ul>
     </div>
@@ -211,6 +218,7 @@ import OntologyPanel from './panels/OntologyPanel';
 import PropertiesPanel from './panels/PropertiesPanel';
 import FollowPanel from './panels/FollowPanel';
 import ReviewPanel from './panels/ReviewPanel';
+import HeatmapPanel from './panels/HeatmapPanel';
 
 import SelectInteraction from './interactions/SelectInteraction';
 import DrawInteraction from './interactions/DrawInteraction';
@@ -255,6 +263,7 @@ export default {
     PropertiesPanel,
     FollowPanel,
     ReviewPanel,
+    HeatmapPanel,
 
     SelectInteraction,
     DrawInteraction,
@@ -316,6 +325,9 @@ export default {
     },
     canEdit() {
       return this.$store.getters['currentProject/canEditImage'](this.image);
+    },
+    imageDemoID() {
+      return constants.IMAGE_DEMO_ID;
     },
     projectionName() {
       return `CYTO-${this.image.id}`;
@@ -475,11 +487,10 @@ export default {
     },
     heatmapLayerURLs(){
       let slice = this.slices[0];
-      return [`${slice.imageServerUrl}/image/${constants.HEATMAP_PATH}/normalized-tile/zoom/{z}/ti/{tileIndex}.png${this.heatmapURLQuery}`];
+      return [`${slice.imageServerUrl}/image/${constants.HEATMAP_PATH}/normalized-tile/zoom/{z}/ti/{tileIndex}.webp${this.heatmapURLQuery}`];
     },
     colorManipulationOn() {
-      return this.imageWrapper.colors.brightness !== 0
-                || this.imageWrapper.colors.hue !== 0 || this.imageWrapper.colors.saturation !== 0;
+      return this.imageWrapper.colors.brightness !== 0 || this.imageWrapper.colors.hue !== 0 || this.imageWrapper.colors.saturation !== 0;
     },
     operation() {
       return operation;
@@ -765,6 +776,11 @@ export default {
         case 'toggle-overview':
           if (this.isPanelDisplayed('overview')) {
             this.toggleOverview();
+          }
+          return;
+        case 'toggle-heatmap':
+          if (this.isPanelDisplayed('heatmap')) {
+            this.togglePanel('heatmap');
           }
           return;
       }

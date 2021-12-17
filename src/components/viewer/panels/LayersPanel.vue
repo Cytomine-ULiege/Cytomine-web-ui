@@ -64,15 +64,6 @@
       <label>{{ $t('layers-opacity') }}</label>
       <input class="slider is-fullwidth is-small" v-model="layersOpacity" step="0.05" min="0" max="1" type="range">
     </div>
-
-    <table v-if="this.image.id === 1186" class="threshold">
-      <tr>
-        <td>{{ $t('threshold') }}</td>
-        <td>
-          <cytomine-slider v-model="threshold" :min="0.0" :max="1" :interval="0.01" :integer-only="false"/>
-        </td>
-      </tr>
-    </table>
   </template>
 </div>
 </template>
@@ -83,11 +74,9 @@ import {get} from '@/utils/store-helpers';
 import {fullName} from '@/utils/user-utils.js';
 import {ProjectDefaultLayerCollection} from 'cytomine-client';
 import _ from 'lodash';
-import CytomineSlider from '@/components/form/CytomineSlider';
 
 export default {
   name: 'layers-panel',
-  components: {CytomineSlider},
   props: {
     index: String,
     layersToPreload: {
@@ -131,14 +120,6 @@ export default {
       },
       set(value) {
         this.$store.commit(this.imageModule + 'setLayersOpacity', Number(value));
-      }
-    },
-    threshold: {
-      get() {
-        return this.imageWrapper.style.threshold;
-      },
-      set(value) {
-        this.$store.commit(this.imageModule + 'setThreshold', Number(value));
       }
     },
     layersIds() {
@@ -457,16 +438,5 @@ td .button {
   text-transform: uppercase;
   font-size: 0.8em;
   width: 15em;
-}
-
-.threshold td {
-  text-align: left;
-  text-transform: uppercase;
-  font-size: 0.8em;
-  width: 15em;
-}
-
-.threshold td:last-child {
-  width: 100%;
 }
 </style>

@@ -9,6 +9,8 @@
         </td>
       </tr>
     </table>
+
+    <button class="is-fullwidth button is-small">{{$t('create-annotations')}}</button>
   </div>
 </template>
 

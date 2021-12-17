@@ -1142,3 +1142,4 @@ channel,Channel,Canal
 warning-cannot-draw-multiple-slices,Cannot draw on multiple channels simultaneously,Impossible de dessiner sur plusieurs canaux simultanément
 threshold,Threshold,Seuillage
 heatmap,Heatmap,Carte Thermique
+create-annotations,Create annotations,Créer des annotations

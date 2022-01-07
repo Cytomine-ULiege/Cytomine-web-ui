@@ -10,11 +10,14 @@
       </tr>
     </table>
 
-    <button class="is-fullwidth button is-small">{{$t('create-annotations')}}</button>
+    <button class="is-fullwidth button is-small" @click="createAnnotations()">{{ $t('create-annotations') }}</button>
   </div>
 </template>
 
 <script>
+import {get} from '@/utils/store-helpers';
+
+import {Job, JobParameter} from 'cytomine-client';
 import CytomineSlider from '@/components/form/CytomineSlider';
 
 export default {
@@ -24,6 +27,7 @@ export default {
     index: String
   },
   computed: {
+    project: get('currentProject/project'),
     imageModule() {
       return this.$store.getters['currentProject/imageModule'](this.index);
     },
@@ -39,6 +43,31 @@ export default {
       },
       set(value) {
         this.$store.commit(this.imageModule + 'setThreshold', Number(value));
+      }
+    }
+  },
+  methods: {
+    async createAnnotations() {
+      try {
+        let parameters = [
+          new JobParameter({softwareParameter: 2481, value: '2688'}),
+          new JobParameter({softwareParameter: 2487, value: 2679}),
+          new JobParameter({softwareParameter: 2493, value: this.threshold}),
+          new JobParameter({softwareParameter: 2499, value: '1000'}),
+        ];
+        let job = new Job({
+          software: 2439,
+          project: this.project.id,
+          jobParameters: parameters
+        });
+        await job.save();
+        this.$emit('add', job);
+        await job.execute();
+        this.$notify({type: 'success', text: this.$t('notif-success-analysis-launch')});
+      }
+      catch (error) {
+        console.log(error);
+        this.$notify({type: 'error', text: this.$t('notif-error-analysis-launch')});
       }
     }
   }

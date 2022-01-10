@@ -20,6 +20,8 @@ import {get} from '@/utils/store-helpers';
 import {Job, JobParameter} from 'cytomine-client';
 import CytomineSlider from '@/components/form/CytomineSlider';
 
+import constants from '@/utils/constants.js';
+
 export default {
   name: 'heatmap-panel',
   components: {CytomineSlider},
@@ -50,13 +52,14 @@ export default {
     async createAnnotations() {
       try {
         let parameters = [
-          new JobParameter({softwareParameter: 2481, value: '2688'}),
-          new JobParameter({softwareParameter: 2487, value: 2679}),
-          new JobParameter({softwareParameter: 2493, value: this.threshold}),
-          new JobParameter({softwareParameter: 2499, value: '1000'}),
+          new JobParameter({softwareParameter: 10328, value: '2688'}),
+          new JobParameter({softwareParameter: 10334, value: constants.IMAGE_DEMO_ID}),
+          new JobParameter({softwareParameter: 10340, value: constants.HEATMAP_ID}),
+          new JobParameter({softwareParameter: 10346, value: this.threshold}),
+          new JobParameter({softwareParameter: 10352, value: '1000'}),
         ];
         let job = new Job({
-          software: 2439,
+          software: constants.SOFTWARE_ANNOT_CREATION_ID,
           project: this.project.id,
           jobParameters: parameters
         });

@@ -60,7 +60,12 @@
         v-model="currentZStack"
         :max="image.depth - 1"
         :integer-only="true"
-        class="image-dimension-slider" />
+        class="image-dimension-slider"
+      >
+        <template v-if="hasZName" #default="{ value }">
+          {{ zValue(value) || "?" }}
+        </template>
+      </cytomine-slider>
 
       <image-controls-shift-buttons
           :index="index"
@@ -187,12 +192,17 @@ export default {
     },
     isImageMultidimensional() {
       return this.hasChannels || this.hasDuration || this.hasDepth;
+    },
+    hasZName() {
+      return this.currentSlice.zName !== null;
     }
-
   },
   methods: {
     formatMinutesSeconds(time) {
       return formatMinutesSeconds(time);
+    },
+    zValue() {
+      return this.currentSlice.zName;
     },
 
     async goToRank(rank) {

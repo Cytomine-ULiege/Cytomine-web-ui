@@ -162,6 +162,8 @@
       <i class="fas fa-circle"></i> {{$t('live')}}
     </div>
 
+    <finer-magnification class="finer-magnification-wrapper" :index="index" />
+
     <rotation-selector class="rotation-selector-wrapper" :index="index" />
 
     <scale-line :image="image" :zoom="zoom" :mousePosition="projectedMousePosition" />
@@ -183,6 +185,7 @@ import _ from 'lodash';
 
 import ImageName from '@/components/image/ImageName';
 import AnnotationLayer from './AnnotationLayer';
+import FinerMagnification from './FinerMagnification';
 import RotationSelector from './RotationSelector';
 import ScaleLine from './ScaleLine';
 import DrawTools from './DrawTools';
@@ -227,6 +230,7 @@ export default {
 
     AnnotationLayer,
 
+    FinerMagnification,
     RotationSelector,
     ScaleLine,
     DrawTools,
@@ -978,8 +982,15 @@ $colorOpenedPanelLink: #6c95c8;
 .rotation-selector-wrapper {
   position: absolute;
   left: .5em;
-  top: 5rem;
+  top: 7rem;
   z-index: 20;
+}
+
+.finer-magnification-wrapper {
+  position: absolute;
+  left: .5em;
+  top: 4.5rem;
+  z-index: 30;
 }
 
 .custom-overview {

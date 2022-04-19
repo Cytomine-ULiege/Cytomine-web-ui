@@ -22,11 +22,11 @@
     <div v-show="expanded">
       <div class="top">
         <div class="magnification-controls">
-          Finer Magnification
+          {{ $t('finer-magnification') }}
         </div>
         <button class="delete is-small" @click="expanded=false"></button>
       </div>
-      <cytomine-slider :max="100" :integerOnly="false"/>
+      <cytomine-slider v-model="magnification" :max="maxZoom" :integerOnly="false"/>
     </div>
   </div>
 </template>
@@ -44,6 +44,31 @@ export default {
     return {
       expanded: false
     };
+  },
+  computed: {
+    viewerModule() {
+      return this.$store.getters['currentProject/currentViewerModule'];
+    },
+    imageWrapper() {
+      return this.$store.getters['currentProject/currentViewer'].images[this.index];
+    },
+    imageModule() {
+      return this.$store.getters['currentProject/imageModule'](this.index);
+    },
+    maxZoom() {
+      return this.$store.getters[this.imageModule + 'maxZoom'];
+    },
+    magnification: {
+      get() {
+        return this.imageWrapper.view.zoom;
+      },
+      set(value) {
+        this.$store.dispatch(this.viewerModule + 'setZoom', {
+          index: this.index,
+          zoom: Number(value)
+        });
+      }
+    }
   },
 };
 </script>

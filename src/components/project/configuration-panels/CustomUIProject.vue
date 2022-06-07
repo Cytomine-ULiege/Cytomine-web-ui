@@ -12,7 +12,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.-->
 
-
 <template>
 <b-message v-if="error" type="is-danger" has-icon icon-size="is-small">
   <h2> {{ $t('error') }} </h2>
@@ -133,7 +132,6 @@ export default {
             {key: 'project-explore-annotation-linked-annotations', label: 'linked-annotations', icon: 'fas fa-link', parentConfiguration: 'project-explore-annotation-main'},
             {key: 'project-explore-annotation-creation-info', label: 'creation-info', icon: 'fas fa-info', parentConfiguration: 'project-explore-annotation-main'},
             {key: 'project-explore-annotation-comments', label: 'comments', icon: 'fas fa-comment', parentConfiguration: 'project-explore-annotation-main'}
-
           ]
         },
         {

@@ -433,6 +433,7 @@ export default {
     nbPerPage: sync('perPage', storeOptions),
     selectedColor: sync('outlineColor', storeOptions),
 
+    // eslint-disable-next-line vue/return-in-computed-property
     targetAnnotationType() {
       switch(this.$route.query.type) {
         case 'user':
@@ -569,6 +570,8 @@ export default {
           return this.tracksOptions;
         case 'IMAGEGROUP':
           return this.imageGroups;
+        default:
+          return [];
       }
     },
     isByTerm() {

@@ -40,7 +40,7 @@
         <uploaded-file-status :file="node.data" :iconOnly="true" />
       </div>
       <div class="buttons">
-        <a class="button is-small is-link" :href="node.data.downloadURL">
+        <a class="button is-small is-link" @click="download(node.data)">
           {{$t('button-download')}}
         </a>
         <button class="button is-small is-danger" @click="confirmDeletion(node.data)">
@@ -83,14 +83,14 @@
       {{$t('sample-preview-of', {filename: samplePreview.originalFilename})}}
       <button class="button is-small" @click="samplePreview = null">{{$t('button-hide')}}</button>
     </h2>
-    <img :src="samplePreview.thumbURL">
+    <image-thumbnail :url="this.shortTermToken" :size="512" :key="samplePreview.thumbURL" :extra-parameters="{Authorization: 'Bearer ' + shortTermToken }"/>
   </template>
   <template v-else-if="slidePreview">
     <h2>
       {{$t('slide-preview-of', {filename: slidePreview.originalFilename})}}
       <button class="button is-small" @click="slidePreview = null">{{$t('button-hide')}}</button>
     </h2>
-    <img :src="slidePreview.macroURL">
+    <image-thumbnail :url="slidePreview.macroURL" :size="512" :key="slidePreview.macroURL" :macro="true" :extra-parameters="{Authorization: 'Bearer ' + shortTermToken }"/>
   </template>
 
   <template v-if="image && profileEnabled">
@@ -115,10 +115,14 @@ import {UploadedFile, UploadedFileCollection, AbstractImage, UploadedFileStatus 
 import UploadedFileStatus from './UploadedFileStatus';
 import filesize from 'filesize';
 import ProfileStatus from './ProfileStatus';
+import {appendShortTermToken} from '@/utils/token-utils.js';
+import {get} from '@/utils/store-helpers.js';
+import ImageThumbnail from '@/components/image/ImageThumbnail';
 
 export default {
   name: 'uploaded-file-details',
   components: {
+    ImageThumbnail,
     ProfileStatus,
     SlVueTree,
     UploadedFileStatus
@@ -144,6 +148,7 @@ export default {
     };
   },
   computed: {
+    shortTermToken: get('currentUser/shortTermToken'),
     collection() {
       return new UploadedFileCollection({
         root: this.rootId,
@@ -175,6 +180,7 @@ export default {
     },
   },
   methods: {
+    appendShortTermToken,
     findRoot() {
       this.rootId = this.file.root || this.file.id;
     },
@@ -257,6 +263,9 @@ export default {
         }
         this.$notify({type: 'error', text});
       }
+    },
+    download(data) {
+      window.location.assign(appendShortTermToken(data.downloadURL, this.shortTermToken));
     }
   },
   created() {

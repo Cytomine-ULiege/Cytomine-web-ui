@@ -29,8 +29,8 @@
             :detailed="false"
         >
           <template #default="{row: image}">
-            <b-table-column :label="$t('overview')">
-              <img :src="image.preview" class="image-overview">
+            <b-table-column :label="$t('overview')" width="100">
+              <image-thumbnail :image="image" :size="128" :key="`${image.id}-thumb-128`" :extra-parameters="{Authorization: 'Bearer ' + shortTermToken }"/>
             </b-table-column>
 
             <b-table-column field="instanceFilename" :label="$t('name')" sortable>
@@ -73,6 +73,7 @@ import {get} from '@/utils/store-helpers';
 import {ImageInstanceCollection, ImageGroupImageInstance} from 'cytomine-client';
 import CytomineModal from '@/components/utils/CytomineModal';
 import CytomineTable from '@/components/utils/CytomineTable';
+import ImageThumbnail from '@/components/image/ImageThumbnail';
 
 export default {
   name: 'add-to-image-group-modal',
@@ -83,7 +84,8 @@ export default {
   },
   components: {
     CytomineTable,
-    CytomineModal
+    CytomineModal,
+    ImageThumbnail
   },
   data() {
     return {
@@ -98,6 +100,7 @@ export default {
   },
   computed: {
     project: get('currentProject/project'),
+    shortTermToken: get('currentUser/shortTermToken'),
     imageCollection() {
       let collection = new ImageInstanceCollection({
         filterKey: 'project',
@@ -174,10 +177,5 @@ export default {
 >>> .modal-card {
   width: 100%;
   height: 80vh;
-}
-
-.image-overview {
-  max-height: 4rem;
-  max-width: 10rem;
 }
 </style>

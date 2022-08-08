@@ -18,7 +18,8 @@
     "chartjs-plugin-datalabels": "^0.6.0",
     "chartjs-plugin-zoom": "^0.7.4",
     "copy-to-clipboard": "^3.0.8",
-    "cytomine-client": "1.7.1",
+    "core-js": "^3.6.5",
+    "cytomine-client": "github:Cytomine-ULiege/Cytomine-js-client#spring-core-image-group",
     "detect-browser": "^4.7.0",
     "filesize": "^4.1.2",
     "ifvisible": "^1.1.0",
@@ -46,9 +47,8 @@
     "vuex": "^3.1.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.5.1",
-    "@vue/cli-plugin-eslint": "^3.6.0",
-    "@vue/cli-service": "^4.0.0",
+    "@vue/cli-plugin-babel": "^4.5.14",
+    "@vue/cli-service": "^4.5.14",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "eslint": "^5.16.0",
     "i18n-csv2json-cli": "^1.0.2",

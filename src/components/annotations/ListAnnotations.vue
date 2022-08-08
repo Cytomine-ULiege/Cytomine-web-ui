@@ -340,6 +340,7 @@ import TrackTreeMultiselect from '@/components/track/TrackTreeMultiselect';
 const storeOptions = {rootModuleProp: 'storeModule'};
 // redefine helpers to use storeOptions and correct module path
 const localSyncMultiselectFilter = (filterName, options) => syncMultiselectFilter(null, filterName, options, storeOptions);
+import {appendShortTermToken} from '@/utils/token-utils.js';
 
 export default {
   name: 'list-annotations',
@@ -352,6 +353,7 @@ export default {
   },
   data() {
     return {
+      algoEnabled: constants.ALGORITHMS_ENABLED,
       loading: true,
       error: false,
       revision: 0,
@@ -409,6 +411,7 @@ export default {
     },
     currentUser: get('currentUser/user'),
     project: get('currentProject/project'),
+    shortTermToken: get('currentUser/shortTermToken'),
     blindMode() {
       return this.project.blindMode;
     },
@@ -424,7 +427,7 @@ export default {
 
     colors() {
       let colors = defaultColors.map(color => ({label: this.$t(color.name), ...color}));
-      colors.push({label: this.$t('no-outline')});
+      colors.push({label: this.$t('no-outline'), hexaCode: ''});
       return colors;
     },
 
@@ -570,6 +573,7 @@ export default {
         case 'IMAGEGROUP':
           return this.imageGroups;
       }
+      throw new Error('Cannot load a category options ' + this.selectedCategorization.categorization);
     },
     isByTerm() {
       return this.selectedCategorization.categorization === 'TERM';
@@ -602,11 +606,14 @@ export default {
         imagesIds = this.selectedImageGroups.map(ig => this.imagesIdsInGroup(ig)).flat();
       }
       let users = (this.selectedAnnotationType === this.jobAnnotationOption) ? this.userJobs : this.projectUsers;
+      console.log('users', users);
+      console.log('this.selectedUsersIds', this.selectedUsersIds);
+
       let collection = new AnnotationCollection({
         project: this.project.id,
         terms: this.selectedTermsIds.length===this.termsOptions.length ? null : this.selectedTermsIds,
         images: imagesIds,
-        users: this.selectedUsersIds.length===users.length ? null : this.selectedUsersIds,
+        users: this.selectedUsersIds!=null && this.selectedUsersIds.length===users.length ? null : this.selectedUsersIds,
         reviewed: this.reviewed,
         reviewUsers: this.reviewUsersIds,
         noTerm: this.noTerm,
@@ -627,8 +634,9 @@ export default {
     }
   },
   methods: {
-    viewAnnot({annot}) {
-      this.$router.push(`/project/${this.project.id}/image/${annot.image}/annotation/${annot.id}`);
+    appendShortTermToken,
+    viewAnnot(annot) {
+      this.$router.push(`/project/${annot.project}/image/${annot.image}/annotation/${annot.id}`);
     },
     async fetchImages() {
       if (!this.tooManyImages) {
@@ -670,7 +678,7 @@ export default {
       this.tags = (await TagCollection.fetchAll()).array;
     },
     downloadURL(format) {
-      return this.collection.getDownloadURL(format);
+      return appendShortTermToken(this.collection.getDownloadURL(format), this.shortTermToken);
     },
     addTerm(term) {
       this.terms.push(term);
@@ -723,7 +731,8 @@ export default {
     }
   },
   async created() {
-    this.annotationTypes = [this.userAnnotationOption, this.jobAnnotationOption, this.reviewedAnnotationOption];
+    this.annotationTypes = [this.userAnnotationOption, this.reviewedAnnotationOption];
+    if(this.algoEnabled) this.annotationTypes.splice(1, 0, this.jobAnnotationOption);
 
     // if store was not yet initialized, set default values
     if(!this.selectedSize) {

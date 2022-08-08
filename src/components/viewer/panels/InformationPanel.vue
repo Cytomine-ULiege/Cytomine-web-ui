@@ -49,7 +49,7 @@
       </tr>
       <tr v-if="image.channels > 1">
         <td><strong>{{$t('image-channels')}}</strong></td>
-        <td>{{$tc("count-bands", image.channels, {count: image.channels})}}</td>
+        <td>{{$tc("count-bands", image.extrinsicChannels, {count: image.extrinsicChannels})}}</td>
       </tr>
       <tr>
         <td><strong>{{$t('resolution')}}</strong></td>
@@ -80,7 +80,7 @@
             <router-link :to="`/project/${image.project}/image/${image.id}/information`" class="button is-small">
               {{$t('button-more-info')}}
             </router-link>
-            <a class="button is-small" :href="image.downloadURL">
+            <a class="button is-small" @click="download(image, shortTermToken)">
               {{$t('button-download')}}
             </a>
           </div>
@@ -125,6 +125,7 @@
 import {get} from '@/utils/store-helpers';
 import ImageName from '@/components/image/ImageName';
 import CalibrationModal from '@/components/image/CalibrationModal';
+import {appendShortTermToken} from '@/utils/token-utils.js';
 
 export default {
   name: 'information-panel',
@@ -144,6 +145,7 @@ export default {
   },
   computed: {
     currentUser: get('currentUser/user'),
+    shortTermToken: get('currentUser/shortTermToken'),
     viewerModule() {
       return this.$store.getters['currentProject/currentViewerModule'];
     },
@@ -170,9 +172,13 @@ export default {
     }
   },
   methods: {
+    appendShortTermToken,
     setResolution(resolution) {
       this.$store.dispatch(this.viewerModule + 'setImageResolution', {idImage: this.image.id, resolution});
       this.$eventBus.$emit('reloadAnnotations', {idImage: this.image.id}); // refresh the sources to update perimeter/area
+    },
+    download(image) {
+      window.location.assign(appendShortTermToken(image.downloadURL, this.shortTermToken));
     },
     async previousImage() {
       try {

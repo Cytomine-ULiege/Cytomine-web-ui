@@ -53,7 +53,7 @@
       @updateProperties="$emit('updateProperties')"
       @select="$emit('select', $event)"
       @centerView="$emit('centerView')"
-      @deletion="handleDeletion"
+      @deletion="$emit('deletion')"
       v-if="opened"
     /> <!-- Display component only if it is the currently displayed annotation
             (prevents fetching unnecessary information) -->
@@ -62,6 +62,8 @@
 </template>
 
 <script>
+import {appendShortTermToken} from '@/utils/token-utils.js';
+import {get} from '@/utils/store-helpers.js';
 
 export default {
   name: 'annotation-preview',
@@ -89,10 +91,34 @@ export default {
     };
   },
   computed: {
-    styleAnnotDetails() {
-      let outlineParams = this.color ? '&draw=true&color=0x' + this.color : '';
-      let url = `${this.annot.url}?maxSize=${this.size}&square=true&complete=false&thickness=2&increaseArea=1.25${outlineParams}`;
+    shortTermToken: get('currentUser/shortTermToken'),
+    cropParameters() {
+      let params = {
+        square: true,
+        complete: true,
+        thickness: 2,
+        increaseArea: 1.25,
+        rev: this.revisionCrop,
+      };
 
+      if (this.color || this.color === '') {
+        params.draw = true;
+      }
+      if (this.color) {
+        params.color = `0x${this.color}`;
+      }
+      if (this.annot.updated) {
+        params.updated = this.annot.updated;
+      }
+
+      return params;
+    },
+    cropUrl() {
+      return this.annot.annotationCropURL(this.size, 'jpg', this.cropParameters);
+    },
+    styleAnnotDetails() {
+      let url = appendShortTermToken(`${this.cropUrl}`, this.shortTermToken);
+      console.log('url', url);
       return {
         backgroundImage: `url(${url})`,
         backgroundRepeat: 'no-repeat',
@@ -126,10 +152,6 @@ export default {
       }
 
       this.opened = false;
-    },
-    handleDeletion() {
-      this.$eventBus.$emit('deleteAnnotation', this.annot);
-      this.$emit('update');
     },
     reloadAnnotationCropHandler(annot) {
       if (annot.id === this.annot.id) {

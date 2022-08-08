@@ -50,7 +50,7 @@
       </div>
       <div v-else class="image-selector">
         <div class="card" v-for="image in images" :key="image.id" :class="{active: alreadyAdded(image)}">
-          <a class="card-image" @click="addImage(image)" :style="'background-image: url(' + image.preview + ')'"></a>
+          <a class="card-image" @click="addImage(image)" :style="'background-image: url(' + appendShortTermToken(image.preview, shortTermToken) + ')'"></a>
           <div class="card-content">
             <div class="content">
               <a @click="addImage(image)">
@@ -89,6 +89,8 @@ import {get} from '@/utils/store-helpers';
 import CytomineMultiselect from '@/components/form/CytomineMultiselect';
 import ImageName from '@/components/image/ImageName';
 import {ImageInstanceCollection, ImageGroupCollection} from 'cytomine-client';
+import {getWildcardRegexp} from '@/utils/string-utils';
+import {appendShortTermToken} from '@/utils/token-utils.js';
 import _ from 'lodash';
 
 export default {
@@ -108,6 +110,7 @@ export default {
   },
   computed: {
     project: get('currentProject/project'),
+    shortTermToken: get('currentUser/shortTermToken'),
     viewerModule() {
       return this.$store.getters['currentProject/currentViewerModule'];
     },
@@ -138,6 +141,7 @@ export default {
     }
   },
   methods: {
+    appendShortTermToken,
     debounceSearchString: _.debounce(async function(value) {
       this.searchString = value;
     }, 500),

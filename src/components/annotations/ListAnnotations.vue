@@ -86,6 +86,21 @@
               />
             </div>
           </div>
+          <div class="column filter">
+            <div class="filter-label">
+              {{$t('group-linked-annotations')}}
+            </div>
+            <div class="filter-body">
+              <cytomine-multiselect
+                  v-model="regroup"
+                  :options="groupBundling"
+                  label="label"
+                  track-by="bundling"
+                  :allow-empty="false"
+                  :searchable="false"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -255,6 +270,7 @@
       :size="selectedSize.size"
       :color="selectedColor.hexaCode"
       :nbPerPage="nbPerPage"
+      :bundling="regroup.bundling"
 
       :allTerms="terms"
       :allUsers="allUsers"
@@ -352,6 +368,12 @@ export default {
         {label: this.$t('medium'), size: 125},
         {label: this.$t('large'), size: 200},
         {label: this.$t('huge'), size: 400},
+      ],
+
+      groupBundling: [
+        {label: this.$t('yes-one-group-per-line'), bundling: 'ONE_PER_LINE'},
+        {label: this.$t('yes'), bundling: 'YES'},
+        {label: this.$t('no'), bundling: 'NO'}
       ],
 
       userAnnotationOption: this.$t('user-annotations'),
@@ -497,6 +519,7 @@ export default {
     selectedTermsIds: localSyncMultiselectFilter('termsIds', 'termOptionsIds'),
     fromDate: sync('fromDate', storeOptions),
     toDate: sync('toDate', storeOptions),
+    regroup: sync('regroup', storeOptions),
 
     afterThan() {
       return this.fromDate ? this.fromDate.getTime() : null;
@@ -723,6 +746,9 @@ export default {
     }
     if(!this.selectedAnnotationType) {
       this.selectedAnnotationType = this.userAnnotationOption;
+    }
+    if(!this.regroup) {
+      this.regroup = this.groupBundling[this.groupBundling.length - 1];
     }
     // ---
 

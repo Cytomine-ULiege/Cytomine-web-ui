@@ -113,9 +113,9 @@ export default {
     }
   },
   methods: {
-    clearFeatures() {
+    clearFeatures(cache=true) {
       if(this.$refs.olSource) {
-        this.$store.commit(this.imageModule + 'removeLayerFromSelectedFeatures', {layer: this.layer, cache: true});
+        this.$store.commit(this.imageModule + 'removeLayerFromSelectedFeatures', {layer: this.layer, cache});
         this.$refs.olSource.clearFeatures();
       }
     },
@@ -146,7 +146,7 @@ export default {
           this.clearFeatures();
         }
         else if(hard) {
-          this.clearFeatures();
+          this.clearFeatures(false);
           this.loader();
         }
         else {
@@ -230,6 +230,8 @@ export default {
         showTerm: true,
         showGIS: true,
         showTrack: true,
+        showLink: true,
+        showImageGroup: true,
         kmeans: true
       }).fetchAll();
 
@@ -360,7 +362,7 @@ export default {
   },
   mounted() {
     this.$eventBus.$on('addAnnotation', this.addAnnotationHandler);
-    this.$eventBus.$on('selectAnnotation', this.selectAnnotationHandler);
+    this.$eventBus.$on('selectAnnotationInLayer', this.selectAnnotationHandler);
     this.$eventBus.$on('reloadAnnotations', this.reloadAnnotationsHandler);
     this.$eventBus.$on('reviewAnnotation', this.reviewAnnotationHandler);
     this.$eventBus.$on('editAnnotation', this.editAnnotationHandler);
@@ -369,7 +371,7 @@ export default {
   beforeDestroy() {
     // unsubscribe from all events
     this.$eventBus.$off('addAnnotation', this.addAnnotationHandler);
-    this.$eventBus.$off('selectAnnotation', this.selectAnnotationHandler);
+    this.$eventBus.$off('selectAnnotationInLayer', this.selectAnnotationHandler);
     this.$eventBus.$off('reloadAnnotations', this.reloadAnnotationsHandler);
     this.$eventBus.$off('reviewAnnotation', this.reviewAnnotationHandler);
     this.$eventBus.$off('editAnnotation', this.editAnnotationHandler);

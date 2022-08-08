@@ -25,9 +25,10 @@
       v-for="(cell, i) in cells"
       :key="i"
       :style="`height:${elementHeight}%; width:${elementWidth}%;`"
+      :class="{highlighted: cell && cell.highlighted}"
     >
       <cytomine-image
-        v-if="cell && cell.image && cell.slice"
+        v-if="cell && cell.image && cell.slices"
         :index="cell.index"
         :key="`${cell.index}-${cell.image.id}`"
         @close="closeMap(cell.index)"
@@ -53,7 +54,7 @@ import viewerModuleModel from '@/store/modules/project_modules/viewer';
 import constants from '@/utils/constants.js';
 import shortcuts from '@/utils/shortcuts.js';
 
-import {ImageInstance, SliceInstance} from 'cytomine-client';
+import {ImageInstance, SliceInstance, Annotation} from 'cytomine-client';
 
 export default {
   name: 'cytomine-viewer',
@@ -108,7 +109,8 @@ export default {
         let index = this.indexImages[i];
         let image = this.viewer.images[index].imageInstance;
         let slice = this.viewer.images[index].activeSlice;
-        cells[i] = {index, image, slice};
+        let highlighted = (this.viewer.images[index].view) ? this.viewer.images[index].view.highlighted : false;
+        cells[i] = {index, image, slice, highlighted};
       }
       return cells;
     },
@@ -121,7 +123,8 @@ export default {
     shortkeysMapping() {
       let allowed = ['nav-next-image', 'nav-previous-image', 'nav-next-slice', 'nav-previous-slice', 'nav-next-t',
         'nav-previous-t', 'nav-next-c', 'nav-previous-c', 'nav-first-slice', 'nav-last-slice', 'nav-first-t',
-        'nav-last-t', 'nav-first-z', 'nav-last-z', 'nav-first-c', 'nav-last-c', 'nav-next-image-in-group', 'nav-previous-image-in-group',
+        'nav-last-t', 'nav-first-z', 'nav-last-z', 'nav-first-c', 'nav-last-c', 'nav-next-image-in-group',
+        'nav-previous-image-in-group', 'nav-next-annot-link', 'nav-previous-annot-link',
         'tool-select', 'tool-point', 'tool-line', 'tool-freehand-line', 'tool-rectangle', 'tool-circle', 'tool-polygon',
         'tool-freehand-polygon', 'tool-fill', 'tool-correct-add', 'tool-correct-remove', 'tool-modify', 'tool-rescale',
         'tool-move', 'tool-rotate', 'tool-delete', 'tool-undo', 'tool-redo', 'tool-review-accept', 'tool-review-reject',
@@ -233,6 +236,38 @@ export default {
       }
     },
 
+    async selectAnnotationHandler({index, annot, center=false}) {
+      try {
+        if (index && annot.image !== this.viewer.images[index].imageInstance.id) {
+          annot = await Annotation.fetch(annot.id);
+          let [image, slice] = await Promise.all([
+            ImageInstance.fetch(annot.image),
+            SliceInstance.fetch(annot.slice)
+          ]);
+          this.$store.commit(`${this.viewerModule}images/${index}/setRoutedAnnotation`, annot);
+          await this.$store.dispatch(`${this.viewerModule}images/${index}/setImageInstance`, {image, slice});
+        }
+        else if (index === null) {
+          annot = await Annotation.fetch(annot.id);
+          if (this.idImages.includes(String(annot.image))) {
+            let index = this.cells.find(cell => cell.image.id === annot.image).index;
+            this.$eventBus.$emit('selectAnnotation', {index, annot, center});
+          }
+          else {
+            let [image, slice] = await Promise.all([
+              ImageInstance.fetch(annot.image),
+              SliceInstance.fetch(annot.slice)
+            ]);
+            await this.$store.dispatch(this.viewerModule + 'addImage', {image, slice, annot});
+          }
+        }
+      }
+      catch(err) {
+        console.log(err);
+        this.error = true;
+      }
+    },
+
     shortkeyEvent(event) {
       this.$eventBus.$emit('shortkeyEvent', event.srcKey);
     }
@@ -245,7 +280,11 @@ export default {
       constants.VIEWER_ANNOTATIONS_REFRESH_INTERVAL
     );
   },
+  mounted() {
+    this.$eventBus.$on('selectAnnotation', this.selectAnnotationHandler);
+  },
   beforeDestroy() {
+    this.$eventBus.$off('selectAnnotation', this.selectAnnotationHandler);
     clearInterval(this.reloadInterval);
   }
 };
@@ -271,5 +310,9 @@ export default {
 
 .hidden {
   display: none;
+}
+
+.highlighted {
+  border: 6px solid #0099ff;
 }
 </style>

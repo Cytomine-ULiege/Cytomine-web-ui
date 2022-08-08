@@ -28,7 +28,7 @@
       :class="{highlighted: cell && cell.highlighted}"
     >
       <cytomine-image
-        v-if="cell && cell.image && cell.slices"
+        v-if="cell && cell.image && cell.slice"
         :index="cell.index"
         :key="`${cell.index}-${cell.image.id}`"
         @close="closeMap(cell.index)"

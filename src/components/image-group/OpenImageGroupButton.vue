@@ -66,6 +66,10 @@ export default {
       return this.images.length;
     },
     batches() {
+      if (this.batchSize === 0) {
+        this.resetBatchSize();
+      }
+
       return Array.from({length: Math.ceil(this.images.length / this.batchSize)}, (v, i) => {
         let start = i * this.batchSize;
         let end = Math.min(start + this.batchSize, this.images.length);
@@ -85,6 +89,9 @@ export default {
       let ids = images.map(img => img.id);
       return `/project/${this.imageGroup.project}/image/${ids.join('-')}`;
     },
+    resetBatchSize() {
+      this.batchSize = 1;
+    }
   },
   created() {
     if (this.batchSize > this.maxBatchSize) {

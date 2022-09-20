@@ -89,7 +89,6 @@ import {get} from '@/utils/store-helpers';
 import CytomineMultiselect from '@/components/form/CytomineMultiselect';
 import ImageName from '@/components/image/ImageName';
 import {ImageInstanceCollection, ImageGroupCollection} from 'cytomine-client';
-import {getWildcardRegexp} from '@/utils/string-utils';
 import {appendShortTermToken} from '@/utils/token-utils.js';
 import _ from 'lodash';
 

@@ -160,7 +160,7 @@ export default {
       this.$refs.inputSlider.focus();
     }
   },
-  created() {
+  mounted() {
     this.internalValue = this.value;
   }
 };

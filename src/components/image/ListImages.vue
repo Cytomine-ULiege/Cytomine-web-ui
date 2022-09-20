@@ -170,7 +170,7 @@
         <template #default="{row: image}">
           <b-table-column :label="$t('overview')" width="100">
             <router-link :to="`/project/${image.project}/image/${image.id}`">
-              <img :src="image.thumbURL(256)" class="image-overview">
+              <image-thumbnail :image="image" :size="128" :key="`${image.id}-thumb-128`" :extra-parameters="{Authorization: 'Bearer ' + shortTermToken }"/>
             </router-link>
           </b-table-column>
 
@@ -247,9 +247,10 @@ import CytomineSlider from '@/components/form/CytomineSlider';
 import ImageName from './ImageName';
 import ImageDetails from './ImageDetails';
 import AddImageModal from './AddImageModal';
-import vendorFromMime from '@/utils/vendor';
+import vendorFromFormat from '@/utils/vendor';
 
 import {ImageInstanceCollection, TagCollection} from 'cytomine-client';
+import ImageThumbnail from '@/components/image/ImageThumbnail';
 
 // store options to use with store helpers to target projects/currentProject/listImages module
 const storeOptions = {rootModuleProp: 'storeModule'};
@@ -260,6 +261,7 @@ const localSyncBoundsFilter = (filterName, maxProp) => syncBoundsFilter(null, fi
 export default {
   name: 'list-images',
   components: {
+    ImageThumbnail,
     ImageName,
     ImageDetails,
     CytomineTable,
@@ -299,6 +301,7 @@ export default {
     currentUser: get('currentUser/user'),
     configUI: get('currentProject/configUI'),
     project: get('currentProject/project'),
+    shortTermToken: get('currentUser/shortTermToken'),
     blindMode() {
       return this.project.blindMode;
     },
@@ -407,10 +410,10 @@ export default {
 
       this.availableFormats = stats.format.list;
 
-      stats.format.list.forEach(mime => {
-        let vendor = vendorFromMime(mime);
+      stats.format.list.forEach(format => {
+        let vendor = vendorFromFormat(format);
         let vendorFormatted = {
-          value: vendor ? mime : 'null',
+          value: vendor ? format : 'null',
           label: vendor ? vendor.name : this.$t('unknown')
         };
 
@@ -425,12 +428,12 @@ export default {
           label: m || this.$t('unknown')
         };
       });
-      this.availableResolutions = stats.resolution.list.map(resolution => {
-        return {
-          value: resolution || 'null',
-          label: resolution ? `${resolution.toFixed(3)} ${this.$t('um-per-pixel')}` : this.$t('unknown')
-        };
-      });
+      // this.availableResolutions = stats.resolution.list.map(resolution => {
+      //   return {
+      //     value: resolution || 'null',
+      //     label: resolution ? `${resolution.toFixed(3)} ${this.$t('um-per-pixel')}` : this.$t('unknown')
+      //   };
+      // });
     },
     async fetchTags() {
       this.availableTags = [{id: 'null', name: this.$t('no-tag')}, ...(await TagCollection.fetchAll()).array];
@@ -493,7 +496,7 @@ export default {
   align-items: center;
 }
 
-.image-overview {
+>>> .image-thumbnail {
   max-height: 4rem;
   max-width: 10rem;
 }

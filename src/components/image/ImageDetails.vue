@@ -20,7 +20,7 @@
         <td class="prop-label">{{$t('overview')}}</td>
         <td class="prop-content" colspan="3">
           <router-link :to="`/project/${image.project}/image/${image.id}`">
-            <img :src="image.thumb" class="image-overview">
+            <image-thumbnail :image="image" :size="256" :key="`${image.id}-thumb-256`" :extra-parameters="{Authorization: 'Bearer ' + shortTermToken }"/>
           </router-link>
         </td>
       </tr>
@@ -86,7 +86,7 @@
         <td class="prop-label">{{$t('slide-preview')}}</td>
         <td class="prop-content" colspan="3">
           <a v-if="image.macroURL" @click="isMetadataModalActive = true">
-            <img :src="image.macroURL" class="image-overview">
+            <image-thumbnail :image="image" :macro="true" :size="256" :key="`${image.id}-macro-256`" :extra-parameters="{Authorization: 'Bearer ' + shortTermToken }"/>
           </a>
           <em v-else>
             {{$t('slide-preview-not-available')}}
@@ -183,7 +183,7 @@
       <tr v-if="isPropDisplayed('channels')">
         <td class="prop-label">{{$t("image-channels")}}</td>
         <td class="prop-content" colspan="3">
-          {{$tc("count-bands", image.channels, {count: image.channels})}}
+          {{$tc("count-bands", image.extrinsicChannels, {count: image.extrinsicChannels})}}
         </td>
       </tr>
       <tr v-if="isPropDisplayed('size')">
@@ -291,16 +291,20 @@ import CalibrationModal from './CalibrationModal';
 import ImageMetadataModal from './ImageMetadataModal';
 import ImageStatus from './ImageStatus';
 import RenameModal from '@/components/utils/RenameModal';
+import ImageThumbnail from '@/components/image/ImageThumbnail';
 
 import {formatMinutesSeconds} from '@/utils/slice-utils.js';
 
 import {ImageInstance} from 'cytomine-client';
 
-import vendorFromMime from '@/utils/vendor';
+import {appendShortTermToken} from '@/utils/token-utils.js';
+
+import vendorFromFormat from '@/utils/vendor';
 
 export default {
   name: 'image-details',
   components: {
+    ImageThumbnail,
     CytomineDescription,
     CytomineTags,
     CytomineProperties,
@@ -328,6 +332,7 @@ export default {
     currentUser: get('currentUser/user'),
     configUI: get('currentProject/configUI'),
     project: get('currentProject/project'),
+    shortTermToken: get('currentUser/shortTermToken'),
     blindMode() {
       return ((this.project || {}).blindMode) || false;
     },
@@ -348,14 +353,17 @@ export default {
       return this.blindMode ? this.image.blindedName : this.image.instanceFilename;
     },
     vendor() {
-      return vendorFromMime(this.image.contentType);
+      return vendorFromFormat(this.image.mime);
     }
   },
   methods: {
+    appendShortTermToken,
     isPropDisplayed(prop) {
       return !this.excludedProperties.includes(prop) && (this.configUI[`project-explore-image-${prop}`] == null || this.configUI[`project-explore-image-${prop}`]);
     },
-
+    download(image) {
+      window.location.assign(appendShortTermToken(image.downloadURL, this.shortTermToken), '_blank');
+    },
     async cancelReview() {
       let errorLabel = this.image.reviewed ? 'notif-error-unvalidate-review' : 'notif-error-cancel-review';
       try {
@@ -421,7 +429,7 @@ export default {
     formatMinutesSeconds(time) {
       return formatMinutesSeconds(time);
     }
-  }
+  },
 };
 </script>
 
@@ -454,7 +462,7 @@ td.prop-content-half {
   max-width: 12rem;
 }
 
-.image-overview {
+>>> .image-thumbnail {
   max-height: 18rem;
   max-width: 50vw;
 }

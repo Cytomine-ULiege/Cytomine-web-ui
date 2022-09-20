@@ -31,6 +31,7 @@ import view from './image_modules/view';
 import review from './image_modules/review';
 import tracks from './image_modules/tracks';
 import annotationsList from './image_modules/annotations-list';
+import controls from './image_modules/controls';
 
 import Vue from 'vue';
 
@@ -56,7 +57,9 @@ export default {
       sliceInstances: {},
       loadedSlicePages: [],
       activeSlice: null,
-      activePanel: null
+      activePanel: null,
+
+      routedAnnotation: null
     };
   },
 
@@ -95,6 +98,13 @@ export default {
 
     setProfile(state, profile) {
       state.profile = profile;
+    },
+
+    setRoutedAnnotation(state, annotation) {
+      state.routedAnnotation = annotation;
+    },
+    clearRoutedAnnotation(state) {
+      state.routedAnnotation = null;
     }
   },
 
@@ -330,6 +340,7 @@ export default {
     review,
     tracks,
     annotationsList,
+    controls
   }
 };
 

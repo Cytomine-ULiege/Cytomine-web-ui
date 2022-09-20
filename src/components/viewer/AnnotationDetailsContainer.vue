@@ -51,7 +51,8 @@
         @updateTerms="$emit('updateTermsOrTracks', annot)"
         @updateTracks="$emit('updateTermsOrTracks', annot)"
         @updateProperties="$emit('updateProperties')"
-        @centerView="$emit('centerView', annot)"
+        @select="$emit('select', $event)"
+        @centerView="$emit('centerView', ($event) ? $event : annot)"
         @deletion="$emit('delete', annot)"
       />
     </div>
@@ -71,7 +72,6 @@ export default {
   components: {VueDraggableResizable, AnnotationDetails},
   props: {
     index: String,
-    view: Object
   },
   data() {
     return {
@@ -169,7 +169,11 @@ export default {
 
       if(this.$refs.playground) {
         let maxX = Math.max(this.$refs.playground.clientWidth - this.width, 0);
-        let maxY = Math.max(this.$refs.playground.clientHeight - this.$refs.detailsPanel.height, 0);
+        let height = 500;
+        if (this.$refs.detailsPanel) {
+          height = this.$refs.detailsPanel.height;
+        }
+        let maxY = Math.max(this.$refs.playground.clientHeight - height, 0);
         let x = Math.min(this.positionAnnotDetails.x, maxX);
         let y = Math.min(this.positionAnnotDetails.y, maxY);
         this.positionAnnotDetails = {x, y};

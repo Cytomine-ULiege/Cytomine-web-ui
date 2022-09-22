@@ -167,6 +167,16 @@ export default {
     canEdit() {
       return this.$store.getters['currentProject/canEditImage'](this.image);
     },
+    canDownloadImages() {
+      // Virtual images (null path) cannot be downloaded.
+      return this.image.path !== null && (
+        this.canManageProject ||
+        ((this.$store.state.currentProject.project || {}).areImagesDownloadable) || false
+      );
+    },
+    canManageProject() {
+      return this.$store.getters['currentProject/canManageProject'];
+    },
     isActiveImage() {
       return this.viewerWrapper.activeImage === this.index;
     }

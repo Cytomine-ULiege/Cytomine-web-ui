@@ -534,6 +534,8 @@ export default {
       await this.$refs.map.$createPromise; // wait for ol.Map to be created
       await this.$refs.baseLayer.$createPromise; // wait for ol.Layer to be created
 
+      let map = this.$refs.map.$map;
+
       this.overview = new OverviewMap({
         view: new View({projection: this.projectionName}),
         layers: [this.$refs.baseLayer.$layer],
@@ -541,7 +543,12 @@ export default {
         target: this.$refs.overview,
         collapsed: this.imageWrapper.view.overviewCollapsed
       });
-      this.$refs.map.$map.addControl(this.overview);
+      map.addControl(this.overview);
+
+      this.overview.getOverviewMap().on(('click'), (evt) => {
+        let size = map.getSize();
+        map.getView().centerOn(evt.coordinate, size, [size[0]/2, size[1]/2]);
+      });
     },
 
     toggleOverview() {
@@ -557,7 +564,6 @@ export default {
     savePosition: _.debounce(async function() {
       if(this.$refs.view) {
         let extent = this.$refs.view.$view.calculateExtent(); // [minX, minY, maxX, maxY]
-
         try {
           await UserPosition.create({
             image: this.image.id,
@@ -650,10 +656,11 @@ export default {
       return this.configUI[`project-explore-${panel}`];
     },
     shortkeyHandler(key) {
-      if(!this.isActiveImage) { // shortkey should only be applied to active map
+      if(!key.startsWith('toggle-all-') && !this.isActiveImage) { // shortkey should only be applied to active map
         return;
       }
 
+      key = key.replace('toggle-all-', 'toggle-');
       switch(key) {
         case 'toggle-information':
           if (this.isPanelDisplayed('info')){
@@ -823,7 +830,7 @@ $colorOpenedPanelLink: #6c95c8;
   top: 0.7em;
   left: 3.5rem;
   right: $widthPanelBar;
-  z-index: 10;
+  z-index: 30;
 }
 
 .broadcast {
@@ -929,6 +936,7 @@ $colorOpenedPanelLink: #6c95c8;
 
 .ol-zoom, .ol-rotate {
   background: none !important;
+  z-index: 20;
 }
 
 .ol-rotate:not(.custom) {
@@ -956,6 +964,7 @@ $colorOpenedPanelLink: #6c95c8;
   position: absolute;
   left: .5em;
   top: 5rem;
+  z-index: 20;
 }
 
 .custom-overview {
@@ -1003,7 +1012,7 @@ $colorOpenedPanelLink: #6c95c8;
   bottom: 0;
   left: 0;
   right: $widthPanelBar;
-  z-index: 20;
+  z-index: 40;
   pointer-events: none;
 }
 </style>

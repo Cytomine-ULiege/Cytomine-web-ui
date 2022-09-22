@@ -436,6 +436,7 @@ export default {
     nbPerPage: sync('perPage', storeOptions),
     selectedColor: sync('outlineColor', storeOptions),
 
+    // eslint-disable-next-line vue/return-in-computed-property
     targetAnnotationType() {
       switch(this.$route.query.type) {
         case 'user':
@@ -572,6 +573,8 @@ export default {
           return this.tracksOptions;
         case 'IMAGEGROUP':
           return this.imageGroups;
+        default:
+          return [];
       }
       throw new Error('Cannot load a category options ' + this.selectedCategorization.categorization);
     },
@@ -606,9 +609,6 @@ export default {
         imagesIds = this.selectedImageGroups.map(ig => this.imagesIdsInGroup(ig)).flat();
       }
       let users = (this.selectedAnnotationType === this.jobAnnotationOption) ? this.userJobs : this.projectUsers;
-      console.log('users', users);
-      console.log('this.selectedUsersIds', this.selectedUsersIds);
-
       let collection = new AnnotationCollection({
         project: this.project.id,
         terms: this.selectedTermsIds.length===this.termsOptions.length ? null : this.selectedTermsIds,

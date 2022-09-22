@@ -61,7 +61,6 @@
         ></div>
       </template>
 
-
       <b-pagination
         :total="nbAnnotations"
         :current.sync="currentPage"

@@ -31,7 +31,6 @@ import {Action, updateTermProperties, updateTrackProperties} from '@/utils/annot
 
 import WKT from 'ol/format/WKT';
 
-import AnnotationsList from './AnnotationsList';
 import AnnotationDetailsContainer from './AnnotationDetailsContainer';
 import {listAnnotationsInGroup, updateAnnotationLinkProperties} from '@/utils/annotation-utils';
 
@@ -48,7 +47,6 @@ export default {
     };
   },
   components: {
-    AnnotationsList,
     AnnotationDetailsContainer,
   },
   computed: {

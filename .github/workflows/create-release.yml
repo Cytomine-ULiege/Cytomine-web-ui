@@ -102,9 +102,11 @@ jobs:
           release_id: ${{ needs.create-release.outputs.release_id }}
         with:
           script: |
+            const fs = require('fs');
+
             try {
               github.rest.repos.uploadReleaseAsset({
-                data: process.env.name,
+                data: fs.readFileSync(process.env.name),
                 name: process.env.name,
                 owner: context.repo.owner,
                 release_id: process.env.release_id,

@@ -92,6 +92,9 @@ jobs:
         with:
           name: ${{ env.DIR_NAME }}.tar.gz
 
+      - name: Display structure of downloaded files
+        run: ls -la
+
       - name: Upload release asset
         uses: actions/github-script@v6
         env:

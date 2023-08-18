@@ -27,7 +27,7 @@ jobs:
       - name: Create app
         run: npm run build
 
-      - name: Rename the artifact
+      - name: Archive the artifact
         run: |
           mv dist ${{ env.DIR_NAME }}
           tar -czvf ${{ env.DIR_NAME }}.tar.gz ${{ env.DIR_NAME }}

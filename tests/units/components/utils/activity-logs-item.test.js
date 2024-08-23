@@ -34,7 +34,7 @@ describe('ActivityLogsItem.vue', () => {
   localVue.component('router-view', {template: '<div><slot></slot></div>'});
 
   beforeAll(() => {
-    localVue.filter('moment', jest.fn((value, format) => moment(Number(value)).format(format)));
+    localVue.filter('moment', jest.fn((value, format) => moment.utc(Number(value)).format(format)));
   });
 
   beforeEach(() => {
@@ -57,7 +57,7 @@ describe('ActivityLogsItem.vue', () => {
     const strongTag = wrapper.find('strong');
     const messageSpan = wrapper.find('.content');
 
-    expect(strongTag.text()).toBe('7/21/2021 3:40:00 PM:');
+    expect(strongTag.text()).toBe('7/21/2021 1:40:00 PM:');
     expect(messageSpan.text()).toContain('Added a new annotation');
   });
 

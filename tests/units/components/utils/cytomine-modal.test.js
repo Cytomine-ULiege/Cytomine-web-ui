@@ -1,8 +1,8 @@
 import {createLocalVue, shallowMount} from '@vue/test-utils';
 import Buefy from 'buefy';
 
-import CytomineModal from '@/components/utils/CytomineModal.vue';
-import CytomineModalCard from '@/components/utils/CytomineModalCard.vue';
+import CytomineModal from '@/components/utils/CytomineModal';
+import CytomineModalCard from '@/components/utils/CytomineModalCard';
 
 describe('CytomineModal.vue', () => {
   const localVue = createLocalVue();

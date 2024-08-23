@@ -1,6 +1,6 @@
 import {shallowMount} from '@vue/test-utils';
 
-import CytomineModalCard from '@/components/utils/CytomineModalCard.vue';
+import CytomineModalCard from '@/components/utils/CytomineModalCard';
 
 describe('CytomineModalCard.vue', () => {
   const mocks = {

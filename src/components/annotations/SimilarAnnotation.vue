@@ -2,7 +2,7 @@
   <div class="similar-annotations-playground">
     <vue-draggable-resizable
       class="draggable"
-      v-show="displayAnnotDetails"
+      v-show="displayAnnotDetails && selectedFeature && showSimilarAnnotations"
       :parent="false"
       :resizable="false"
       :x="350"
@@ -15,7 +15,15 @@
       <div class="actions">
         <h1>{{ $t('similar-annotations') }}</h1>
 
-        <button class="button is-small close" @click="hideSimilarAnnotations()">
+        <button
+          class="button is-small close"
+          v-if="annotation.id !== queryAnnotation.id"
+          @click="returnToQueryAnnotation()"
+        >
+          <i class="fas fa-arrow-circle-left"/>
+        </button>
+
+        <button class="button is-small close" @click="showSimilarAnnotations = false">
           <i class="fas fa-times"/>
         </button>
       </div>
@@ -34,7 +42,7 @@
           />
 
           <div>
-            {{ data.distance.toFixed(2) }}
+            {{ data.distance.toFixed(2) }}%
           </div>
         </div>
       </div>
@@ -73,9 +81,8 @@ export default {
     VueDraggableResizable,
   },
   props: {
-    data: {type: Object},
     image: {type: Object},
-    index: {type: String},
+    index: {type: String, required: true},
     size: {type: Number, default: 64},
   },
   data() {
@@ -95,20 +102,31 @@ export default {
     imageWrapper() {
       return this.$store.getters['currentProject/currentViewer'].images[this.index];
     },
+    showSimilarAnnotations: {
+      get() {
+        return this.imageWrapper.selectedFeatures.showSimilarAnnotations;
+      },
+      set(value) {
+        this.$store.commit(this.imageModule + 'setShowSimilarAnnotations', value);
+      }
+    },
+    data() {
+      return this.imageWrapper.selectedFeatures.similarAnnotations;
+    },
     displayAnnotDetails() {
       return this.imageWrapper.selectedFeatures.displayAnnotDetails;
     },
+    queryAnnotation() {
+      return this.imageWrapper.selectedFeatures.queryAnnotation;
+    },
+    selectedFeature() {
+      return this.$store.getters[this.imageModule + 'selectedFeature'];
+    },
     similarities() {
-      let similarities = [];
-
-      for (let i = 0; i < this.annotations.length; i++) {
-        similarities.push({
-          annotation: this.annotations[i],
-          distance: this.data['distances'][i]
-        });
-      }
-
-      return similarities;
+      return this.annotations.map((annotation, index) => ({
+        annotation,
+        distance: this.data.similarities[index][1]
+      }));
     },
     terms() {
       return this.$store.getters['currentProject/terms'] || [];
@@ -146,13 +164,13 @@ export default {
     findTerm(id) {
       return this.terms.find((term) => term.id === Number(id));
     },
-    hideSimilarAnnotations() {
-      this.$eventBus.$emit('hide-similar-annotations');
-    },
     async fetchAnnotations() {
-      await Promise.all(this.data['filenames'].map(async (id) => {
+      await Promise.all(this.data['similarities'].map(async ([id, _]) => { // eslint-disable-line no-unused-vars
         this.annotations.push(await Annotation.fetch(id));
       }));
+    },
+    returnToQueryAnnotation() {
+      this.$emit('select', {annot: this.queryAnnotation, options: {trySameView: true}});
     }
   },
   async created() {
@@ -214,11 +232,6 @@ h1 {
   text-align: left;
 }
 
-.term-suggestion {
-  flex-direction: column;
-  margin: 0.5rem;
-}
-
 .similar-annotations-playground {
   top: 3.5rem;
   bottom: 2em;
@@ -227,10 +240,13 @@ h1 {
   pointer-events: none;
   position: absolute;
 }
-</style>
 
-<style>
 .similar-annotations-playground .draggable {
   z-index: 20 !important;
+}
+
+.term-suggestion {
+  flex-direction: column;
+  margin: 0.5rem;
 }
 </style>

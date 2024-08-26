@@ -82,7 +82,7 @@ export default {
   },
   props: {
     image: {type: Object},
-    index: {type: String},
+    index: {type: String, required: true},
     size: {type: Number, default: 64},
   },
   data() {

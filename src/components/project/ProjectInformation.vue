@@ -35,13 +35,12 @@ import {get} from '@/utils/store-helpers';
 
 import ProjectDetails from './ProjectDetails';
 import {Project} from 'cytomine-client';
-import constants from '@/utils/constants.js';
+
 export default {
   name: 'project-information',
   components: {ProjectDetails},
   data() {
     return {
-      algoEnabled: constants.ALGORITHMS_ENABLED,
       excludedProperties: [
         'imagesPreview'
       ]
@@ -74,7 +73,6 @@ export default {
     }
   },
   created() {
-    if(!this.algoEnabled) this.excludedProperties.push('numberOfJobAnnotations');
     this.$store.dispatch('currentProject/reloadProject');
   }
 };

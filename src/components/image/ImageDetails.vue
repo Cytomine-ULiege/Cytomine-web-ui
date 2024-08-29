@@ -47,14 +47,6 @@
           </router-link>
         </td>
       </tr>
-      <tr v-if="isPropDisplayed('numberOfJobAnnotations')">
-        <td class="prop-label">{{$t('analysis-annotations')}}</td>
-        <td class="prop-content" colspan="3">
-          <router-link :to="`/project/${image.project}/annotations?image=${image.id}&type=algo`">
-            {{ image.numberOfJobAnnotations }}
-          </router-link>
-        </td>
-      </tr>
       <tr v-if="isPropDisplayed('numberOfReviewedAnnotations')">
         <td class="prop-label">{{$t('reviewed-annotations')}}</td>
         <td class="prop-content" colspan="3">
@@ -78,7 +70,7 @@
       <tr v-if="isPropDisplayed('properties')">
         <td class="prop-label">{{$t('properties')}}</td>
         <td class="prop-content" colspan="3">
-          <cytomine-properties 
+          <cytomine-properties
             :object="image"
             :error="loadPropertiesError"
             :canEdit="canEdit"
@@ -436,7 +428,7 @@ export default {
      * 1       1          1
      */
     isBlindModeAndContributor() {
-      return this.blindMode && !this.canManageProject; 
+      return this.blindMode && !this.canManageProject;
     },
     isInImageGroup() {
       return this.imageGroupLinks.length > 0;

@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import {UserCollection, UserJobCollection} from 'cytomine-client';
+import {UserCollection} from 'cytomine-client';
 
 import OntologyTree from '@/components/ontology/OntologyTree';
 import TrackTree from '@/components/track/TrackTree';
@@ -103,7 +103,6 @@ export default {
       noTermOption: {id: 0, name: this.$t('no-term')},
 
       users: [],
-      userJobs: [],
 
       revision: 0
     };
@@ -205,7 +204,7 @@ export default {
       return this.layers.map(layer => layer.id);
     },
     allUsers() {
-      let allUsers = this.users.concat(this.userJobs);
+      let allUsers = this.users;
       allUsers.forEach(user => user.fullName = fullName(user));
       return allUsers;
     },
@@ -229,12 +228,6 @@ export default {
   methods: {
     async fetchUsers() { // TODO in vuex (project module)
       this.users = (await UserCollection.fetchAll()).array;
-    },
-    async fetchUserJobs() { // TODO in vuex (project module)
-      this.userJobs = (await UserJobCollection.fetchAll({
-        filterKey: 'project',
-        filterValue: this.image.project
-      })).array;
     },
     addAnnotationHandler(annotation) {
       if(annotation.image === this.image.id) {
@@ -291,7 +284,6 @@ export default {
     this.selectedTracksIds = (this.hasTracks) ? [this.tracks[0].id] : [];
 
     this.fetchUsers();
-    this.fetchUserJobs();
   },
   mounted() {
     this.$eventBus.$on('addAnnotation', this.addAnnotationHandler);

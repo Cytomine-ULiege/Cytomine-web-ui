@@ -21,7 +21,6 @@ import currentUser from './modules/current-user.js';
 import currentProject from './modules/current-project.js';
 import ontologies from './modules/ontologies.js';
 import listProjects from './modules/list-projects.js';
-import listSoftware from './modules/list-software.js';
 import advancedSearch from './modules/advanced-search.js';
 
 Vue.use(Vuex);
@@ -32,7 +31,6 @@ let store = new Vuex.Store({
       commit('currentProject/resetState');
       commit('ontologies/resetState');
       commit('listProjects/resetState');
-      commit('listSoftware/resetState');
       commit('advancedSearch/resetState');
       for(let key in state.projects) {
         this.unregisterModule(['projects', key]);
@@ -44,7 +42,6 @@ let store = new Vuex.Store({
     currentProject,
     ontologies,
     listProjects,
-    listSoftware,
     advancedSearch,
     projects: {
       namespaced: true

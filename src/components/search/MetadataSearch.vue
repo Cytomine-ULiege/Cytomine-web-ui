@@ -99,11 +99,6 @@
           <cytomine-slider v-model="boundsUserAnnotations" :max="maxNbUserAnnotations"/>
         </div>
 
-        <div class="filter-label">{{ $t('analysis-annotations') }}</div>
-        <div class="filter-body">
-          <cytomine-slider v-model="boundsJobAnnotations" :max="maxNbJobAnnotations"/>
-        </div>
-
         <div class="filter-label">{{ $t('reviewed-annotations') }}</div>
         <div class="filter-body">
           <cytomine-slider v-model="boundsReviewedAnnotations" :max="maxNbReviewedAnnotations"/>
@@ -152,7 +147,6 @@ export default {
     magnifications: {type: Array, default: () => []},
     maxHeight: {type: Number, default: 0},
     maxWidth: {type: Number, default: 0},
-    maxNbJobAnnotations: {type: Number, default: 0},
     maxNbReviewedAnnotations: {type: Number, default: 0},
     maxNbUserAnnotations: {type: Number, default: 0},
     metadata: {type: Object, default: null},
@@ -182,7 +176,6 @@ export default {
     boundsWidth: localSyncBoundsFilter('boundsWidth', 'maxWidth'),
     boundsHeight: localSyncBoundsFilter('boundsHeight', 'maxHeight'),
     boundsUserAnnotations: localSyncBoundsFilter('boundsUserAnnotations', 'maxNbUserAnnotations'),
-    boundsJobAnnotations: localSyncBoundsFilter('boundsJobAnnotations', 'maxNbJobAnnotations'),
     boundsReviewedAnnotations: localSyncBoundsFilter('boundsReviewedAnnotations', 'maxNbReviewedAnnotations'),
 
     storeModule() {

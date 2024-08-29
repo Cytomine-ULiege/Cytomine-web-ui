@@ -175,13 +175,6 @@ export default {
         (!currentUser.guestByNow && !project.isReadOnly && (image.user === currentUser.id || !project.isRestricted));
     },
 
-    canManageJob: (state, getters, rootState) => job => {
-      let currentUser = rootState.currentUser.user;
-      let project = state.project;
-      return getters.canManageProject ||
-        (!currentUser.guestByNow && !project.isReadOnly && (job.username === currentUser.username || !project.isRestricted));
-    },
-
     canManageProject: (state, _, rootState) => { // true iff current user is admin or project manager
       let currentUser = rootState.currentUser.user || {};
       return currentUser.adminByNow || (!currentUser.guestByNow && state.managers.some(user => user.id === currentUser.id));

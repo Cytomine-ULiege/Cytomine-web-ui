@@ -58,7 +58,6 @@
         :magnifications="availableMagnifications"
         :max-height="maxHeight"
         :max-width="maxWidth"
-        :max-nb-job-annotations="maxNbJobAnnotations"
         :max-nb-reviewed-annotations="maxNbReviewedAnnotations"
         :max-nb-user-annotations="maxNbUserAnnotations"
         :metadata="metadata"
@@ -102,12 +101,6 @@
           <b-table-column field="numberOfAnnotations" :label="$t('user-annotations')" centered sortable width="100">
             <router-link :to="`/project/${image.project}/annotations?image=${image.id}&type=user`">
               {{ image.numberOfAnnotations }}
-            </router-link>
-          </b-table-column>
-
-          <b-table-column field="numberOfJobAnnotations" :label="$t('analysis-annotations')" centered sortable width="100">
-            <router-link :to="`/project/${image.project}/annotations?image=${image.id}&type=algo`">
-              {{ image.numberOfJobAnnotations }}
             </router-link>
           </b-table-column>
 
@@ -190,7 +183,6 @@ export default {
         'instanceFilename',
         'magnification',
         'numberOfAnnotations',
-        'numberOfJobAnnotations',
         'numberOfReviewedAnnotations',
         'size'
       ],
@@ -202,7 +194,6 @@ export default {
       maxWidth: 100,
       maxHeight: 100,
       maxNbUserAnnotations: 100,
-      maxNbJobAnnotations: 100,
       maxNbReviewedAnnotations: 100,
       revision: 0
     };
@@ -240,7 +231,6 @@ export default {
     boundsWidth: localSyncBoundsFilter('boundsWidth', 'maxWidth'),
     boundsHeight: localSyncBoundsFilter('boundsHeight', 'maxHeight'),
     boundsUserAnnotations: localSyncBoundsFilter('boundsUserAnnotations', 'maxNbUserAnnotations'),
-    boundsJobAnnotations: localSyncBoundsFilter('boundsJobAnnotations', 'maxNbJobAnnotations'),
     boundsReviewedAnnotations: localSyncBoundsFilter('boundsReviewedAnnotations', 'maxNbReviewedAnnotations'),
 
     multiSelectFilters() {
@@ -265,7 +255,6 @@ export default {
         {prop: 'width', bounds: this.boundsWidth, max: this.maxWidth},
         {prop: 'height', bounds: this.boundsHeight, max: this.maxHeight},
         {prop: 'numberOfAnnotations', bounds: this.boundsUserAnnotations, max: this.maxNbUserAnnotations},
-        {prop: 'numberOfJobAnnotations', bounds: this.boundsJobAnnotations, max: this.maxNbJobAnnotations},
         {prop: 'numberOfReviewedAnnotations', bounds: this.boundsReviewedAnnotations, max: this.maxNbReviewedAnnotations},
       ];
     },
@@ -344,7 +333,6 @@ export default {
       this.maxWidth = Math.max(100, stats.width.max);
       this.maxHeight = Math.max(100, stats.height.max);
       this.maxNbUserAnnotations = Math.max(100, stats.countImageAnnotations.max);
-      this.maxNbJobAnnotations = Math.max(100, stats.countImageJobAnnotations.max);
       this.maxNbReviewedAnnotations = Math.max(100, stats.countImageReviewedAnnotations.max);
 
 

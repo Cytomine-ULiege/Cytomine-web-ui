@@ -172,4 +172,24 @@ describe('SimilarAnnotation.vue', () => {
 
     expect(wrapper.vm.showSimilarAnnotations).toBe(false);
   });
+
+  it('should emit "select" event when return button is clicked', async () => {
+    store.state.currentProject.currentViewer.images[testIndex].selectedFeatures.queryAnnotation = {id: 2, term: [2]};
+    await wrapper.vm.$nextTick();
+
+    const expectedObject = [[{
+      annot: store.state.currentProject.currentViewer.images[testIndex].selectedFeatures.queryAnnotation,
+      options: {
+        trySameView: true,
+      },
+    }]];
+
+    const returnButton = wrapper.find('.button.is-small.return');
+    await returnButton.trigger('click');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('select')).toBeTruthy();
+    expect(wrapper.emitted('select')).toStrictEqual(expectedObject);
+    expect(wrapper.vm.showSimilarAnnotations).toBe(true);
+  });
 });

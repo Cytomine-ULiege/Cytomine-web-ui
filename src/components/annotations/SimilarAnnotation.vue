@@ -16,7 +16,7 @@
         <h1>{{ $t('similar-annotations') }}</h1>
 
         <button
-          class="button is-small close"
+          class="button is-small return"
           v-if="annotation.id !== queryAnnotation.id"
           @click="returnToQueryAnnotation()"
         >
